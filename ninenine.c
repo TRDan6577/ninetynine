@@ -18,14 +18,26 @@
 int main(int argc, char **argv){
 
     errorCheck(int argc, char **argv);
+
+    // Parse the command line arguments
+    char *player = strtok(argv, userDelimiter); // First arg is program name
+
+    player = strtok(argv, NULL); // User's player name
+
+    char *playerInfo;
+
+    // While there are players to add...
+    while(player){
+        playerInfo = strtok(player, difficultyDelimiter); // Get player's name
+
+    }
     
     return 0;
 }
 
 void errorCheck(int argc, char **argv){
-    // If there was only one command line argument (the name of the program)
-    // then print the usage message
-    if(argc == 1){
+    // If there were two command line arguments then print the usage message
+    if(argc <= 2){
         fprintf(stderr, "usage: ninenine playerName AIPlayerName:difficulty "
                 "[AIPlayerName:difficulty] ...\n");
         exit(0);
@@ -36,5 +48,4 @@ void errorCheck(int argc, char **argv){
         fprintf(stderr, "The maximum number of players is 5 (user plus 4 AI)");
         exit(0);
     }
-
 }

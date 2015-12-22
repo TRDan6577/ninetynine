@@ -7,11 +7,26 @@
 #ifndef NINENINE_H
 #define NINENINE_H
 
+/******************************************************************************
+ *                           Includes and Defines                             *
+ *****************************************************************************/
+
+
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
 
 #define MAX_PLAYERS 5
+
+static const char userDelimiter = " "; // The splitter for strtok
+static const char difficultyDelimiter = ":"; // Another splitter for strtok
+static const short int numPlayers; // The number of players
+
+
+/******************************************************************************
+ *                           Function Declarations                            *
+ *****************************************************************************/
+
 
 /**
  * Purpose: Checks the command line arguments for general errors such as a 
