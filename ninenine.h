@@ -1,6 +1,7 @@
 /**
  * File: ninenine.h
- * Purpose: Header file for ninenine functions
+ * Purpose: Header file for ninenine.c. Includes function decs, includes, defs,
+ *          and other information.
  * Author: Tom Daniels <trd6577@g.rit.edu>
  */
 
@@ -12,15 +13,35 @@
  *****************************************************************************/
 
 
+#define MAX_PLAYERS 5
+#define NUM_CARDS_IN_DECK 52
+
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
 
-#define MAX_PLAYERS 5
-
-static const char userDelimiter = " "; // The splitter for strtok
 static const char difficultyDelimiter = ":"; // Another splitter for strtok
 static const short int numPlayers; // The number of players
+static const char userDelimiter = " "; // The splitter for strtok
+
+
+/******************************************************************************
+ *                              Global Variables                              *
+ *****************************************************************************/
+
+
+/**
+ * Purpose: Holds all of the cards usable by the players
+ */
+Card *deck[NUM_CARDS_IN_DECK];
+
+/**
+ * Purpose: Holds all of the cards used by the players. When the discard pile
+ *          becomes full (52 entries long), the deck is made to point to it
+ *          and the discard points to the empty list of cards that was
+ *          previously the deck
+ */
+Card *discard[NUM_CARDS_IN_DECK];
 
 
 /******************************************************************************
@@ -37,5 +58,10 @@ static const short int numPlayers; // The number of players
  * @param (char**) argv - arrays of strings
  */
 void errorCheck(int argc, char **argv);
+
+/**
+ * Purpose: Does the initial setup for the game engine. Gets the deck, shuffles
+ *          the deck, and gets the players set up with their starting hands.
+ */
 
 #endif

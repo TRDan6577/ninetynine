@@ -29,7 +29,7 @@ int main(int argc, char **argv){
     // While there are players to add...
     while(player){
         playerInfo = strtok(player, difficultyDelimiter); // Get player's name
-
+        // Check if it's the first player then add bots
     }
     
     return 0;
