@@ -15,14 +15,15 @@
 
 #define MAX_PLAYERS 5
 #define NUM_CARDS_IN_DECK 52
+#define HUMAN_PLAYER 0
+
+#include"player.h"
 
 #include<stdlib.h>
 #include<stdio.h>
 #include<string.h>
 
-static const char difficultyDelimiter = ":"; // Another splitter for strtok
-static const short int numPlayers; // The number of players
-static const char userDelimiter = " "; // The splitter for strtok
+static const char *difficultyDelimiter = ":"; // Another splitter for strtok
 
 
 /******************************************************************************
@@ -55,9 +56,8 @@ Card *discard[NUM_CARDS_IN_DECK];
  *          difficulty level is not checked here. If an error is found, the
  *          function prints a message to stderr and exits
  * @param (int) argc - the number of arrays in argv
- * @param (char**) argv - arrays of strings
  */
-void errorCheck(int argc, char **argv);
+void errorCheck(int argc);
 
 /**
  * Purpose: Does the initial setup for the game engine. Gets the deck, shuffles

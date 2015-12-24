@@ -17,25 +17,51 @@
  */
 int main(int argc, char **argv){
 
-    errorCheck(int argc, char **argv);
+    // Error check
+    errorCheck(argc);
+
+    // Important variables
+    const short int numPlayers = argc-1;
+    Player *players[numPlayers];
 
     // Parse the command line arguments
-    char *player = strtok(argv, userDelimiter); // First arg is program name
+    for(int i = 1; i < argc; i++){
 
-    player = strtok(argv, NULL); // User's player name
+        char *playerName;
+        char *playerDifficulty;
+        char *temp; // A pointer needed for strtol
 
-    char *playerInfo;
-
-    // While there are players to add...
-    while(player){
-        playerInfo = strtok(player, difficultyDelimiter); // Get player's name
-        // Check if it's the first player then add bots
+        playerName = strtok(argv[i], difficultyDelimiter); // Get player's name
+        
+        // If this is the user's player name, then the level is zero
+        if(i == 1){
+            players[i-1] = createPlayer(playerName, HUMAN_PLAYER);
+        }
+        // Otherwise set the level to the level indicated by :X in the cmd args
+        else{
+            playerDifficulty = strtok(NULL, difficultyDelimiter);
+            short int numericDifficulty = (short int)strtol(playerDifficulty, &temp, 10);
+            players[i-1] = createPlayer(playerName, numericDifficulty);
+        }
     }
-    
+
+    /* Test to make sure that we're correctly reading the players */
+    printf("Players:\n");
+    for(int i = 0; i < numPlayers; i++){
+       printf("Player %d | Name %s | Level %d | NumCards %d | NumTokens %d \n",
+               i+1, players[i]->name, players[i]->level, players[i]->numCards,
+               players[i]->numTokens);
+    }
+
+    // Clean up the players
+    for(int i = 0; i < numPlayers; i++){
+        destroyPlayer(players[i]);
+    }
+
     return 0;
 }
 
-void errorCheck(int argc, char **argv){
+void errorCheck(int argc){
     // If there were two command line arguments then print the usage message
     if(argc <= 2){
         fprintf(stderr, "usage: ninenine playerName AIPlayerName:difficulty "
@@ -44,8 +70,8 @@ void errorCheck(int argc, char **argv){
     }
 
     // If the number of AI is greater than 4 (so more than 5 players)
-    if(argc > MAX_PLAYERS){
-        fprintf(stderr, "The maximum number of players is 5 (user plus 4 AI)");
+    if(argc > MAX_PLAYERS+1){
+        fprintf(stderr, "The maximum number of players is 5 (user plus 4 AI)\n");
         exit(0);
     }
 }
