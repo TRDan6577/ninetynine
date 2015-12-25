@@ -24,6 +24,7 @@
 #include<string.h>
 
 static const char *difficultyDelimiter = ":"; // Another splitter for strtok
+short int cardsDealt = 0; // Keeps track of the total number of cards dealt
 
 
 /******************************************************************************
@@ -60,8 +61,12 @@ Card *discard[NUM_CARDS_IN_DECK];
 void errorCheck(int argc);
 
 /**
- * Purpose: Does the initial setup for the game engine. Gets the deck, shuffles
- *          the deck, and gets the players set up with their starting hands.
+ * Purpose: Frees the players
+ */
+void cleanup(Player **players, short int numPlayers);
+
+/**
+ * Purpose: Deals cards to 
  */
 
 #endif

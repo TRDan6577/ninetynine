@@ -23,6 +23,8 @@ int main(int argc, char **argv){
     // Important variables
     const short int numPlayers = argc-1;
     Player *players[numPlayers];
+    Card *deck[DECK_SIZE];
+    //Card *discardPile[DECK_SIZE];
 
     // Parse the command line arguments
     for(int i = 1; i < argc; i++){
@@ -42,21 +44,24 @@ int main(int argc, char **argv){
             playerDifficulty = strtok(NULL, difficultyDelimiter);
             short int numericDifficulty = (short int)strtol(playerDifficulty, &temp, 10);
             players[i-1] = createPlayer(playerName, numericDifficulty);
+
+            // If the Player * returned by createPlayer was NULL, an error
+            // occurred and we need to clean up
+            if(!(players[i-1])){
+                cleanup(players, (short int)i-2); // i-2 because we can't free the NULL player
+            }
         }
     }
 
-    /* Test to make sure that we're correctly reading the players */
-    printf("Players:\n");
-    for(int i = 0; i < numPlayers; i++){
-       printf("Player %d | Name %s | Level %d | NumCards %d | NumTokens %d \n",
-               i+1, players[i]->name, players[i]->level, players[i]->numCards,
-               players[i]->numTokens);
-    }
+    // Fill the deck with cards
+    initDeck(deck);
 
-    // Clean up the players
-    for(int i = 0; i < numPlayers; i++){
-        destroyPlayer(players[i]);
-    }
+    // Shuffle the deck
+    shuffle(deck);
+
+    // TODO: deal the cards -> make a function for this too!
+
+    cleanup(players, numPlayers);
 
     return 0;
 }
@@ -73,5 +78,12 @@ void errorCheck(int argc){
     if(argc > MAX_PLAYERS+1){
         fprintf(stderr, "The maximum number of players is 5 (user plus 4 AI)\n");
         exit(0);
+    }
+}
+
+void cleanup(Player **players, short int numPlayers){
+    // Clean up the players
+    for(int i = 0; i < numPlayers; i++){
+        destroyPlayer(players[i]);
     }
 }

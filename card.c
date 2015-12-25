@@ -14,16 +14,29 @@ Card *createCard(char suit, char value){
 
     // Assign the known attributes
     newCard->suit = suit;
-    newCard->sValue = value;
+
+    // Special case handling 10 becuase you cannot have a char that = 10
+    if(!(value == '0')){
+        newCard->sValue = value;
+    }
 
     // If value is a digit and not a face card or an ace
     if(isdigit(value)){
 
-        // Make a temporary string to hold the suit
-        char *temp;
+        // If the svalue is zero, the dvalue must be 10
+        if(value == '0'){
+            newCard->dValue = 0;
+            newCard->sValue = 't';
+        }
+        // Otherwise, convert the sValue to an int
+        else{
 
-        // And put the decimal value into the card instance
-        newCard->dValue = (short int)strtol(&(newCard->sValue), &temp, 10);
+            // Make a temporary string to hold the suit
+            char *temp;
+
+            // And put the decimal value into the card instance
+            newCard->dValue = (short int)strtol(&(newCard->sValue), &temp, 10);
+        }
     }
     // If value is a face card or an ace
     else{
@@ -44,8 +57,9 @@ Card *createCard(char suit, char value){
         }
     }
 
-    // Determine if the card is special (3, 4, 9, 10, K)
-    if(value == THREE || value == FOUR || value == NINE || value == TEN){
+    // Determine if the card is special (3, 4, 9, 10, A)
+    if(value == '3' || value == '4' || value == '9' || value == '0' ||
+            value == 'a'){
         newCard->special = true;
     }
     else{
@@ -53,4 +67,26 @@ Card *createCard(char suit, char value){
     }
 
     return newCard;
+}
+
+void initDeck(Card *deck[DECK_SIZE]){
+    for(int i = 0; i < NUM_SUITS; i++){
+        for(int j = 0; j < NUM_VALUES; j++){
+            deck[NUM_VALUES*i+j] = createCard(suits[i], values[j]);
+        }
+    }
+}
+
+void shuffle(Card *deck[DECK_SIZE]){
+
+    // Seed the random number
+    srand(time(NULL));
+
+    int j;
+    for(int i = 0; i < DECK_SIZE - 1; i++){
+        j = i + rand() / (RAND_MAX / (DECK_SIZE-i)+1);
+        Card *temp = deck[j];
+        deck[j] = deck[i];
+        deck[i] = temp;
+    }
 }

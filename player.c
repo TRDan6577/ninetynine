@@ -9,10 +9,11 @@
 
 Player *createPlayer(char *name, short int level){
 
+    // The level passed in must be between 0 and 3 inclusive
     if(!(MIN_LEVEL <= level && level <= MAX_LEVEL)){
         fprintf(stderr, "Levels for AI can only be 1, 2, or 3 (easy, medium, "
                 " or hard, respectively)\n");
-        exit(0);
+        return NULL;
     }
 
     // Create the new player
@@ -32,13 +33,16 @@ Player *createPlayer(char *name, short int level){
 
 void destroyPlayer(Player *deadMan){
 
-    // Free the cards the player is holding
-    for(int i = 0; i < NUM_STARTING_CARDS; i++){
-        if(deadMan->cards[i]){
-            free(deadMan->cards[i]);
+    // Check to see if the player is NULL
+    if(deadMan){
+        // Free the cards the player is holding
+        for(int i = 0; i < NUM_STARTING_CARDS; i++){
+            if(deadMan->cards[i]){
+                free(deadMan->cards[i]);
+            }
         }
-    }
 
-    // Free the actual player
-    free(deadMan);
+        // Free the actual player
+        free(deadMan);
+    }
 }
