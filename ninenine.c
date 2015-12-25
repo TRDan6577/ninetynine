@@ -48,7 +48,7 @@ int main(int argc, char **argv){
             // If the Player * returned by createPlayer was NULL, an error
             // occurred and we need to clean up
             if(!(players[i-1])){
-                cleanup(players, (short int)i-2); // i-2 because we can't free the NULL player
+                cleanupPlayers(players, (short int)i-2); // i-2 because we can't free the NULL player
             }
         }
     }
@@ -61,7 +61,8 @@ int main(int argc, char **argv){
 
     // TODO: deal the cards -> make a function for this too!
 
-    cleanup(players, numPlayers);
+    cleanupPlayers(players, numPlayers);
+    cleanupDeck(deck);
 
     return 0;
 }
@@ -81,9 +82,17 @@ void errorCheck(int argc){
     }
 }
 
-void cleanup(Player **players, short int numPlayers){
+void cleanupPlayers(Player **players, short int numPlayers){
     // Clean up the players
     for(int i = 0; i < numPlayers; i++){
         destroyPlayer(players[i]);
+    }
+}
+
+void cleanupDeck(Card *deck[DECK_SIZE]){
+    for(int i = 0; i < DECK_SIZE; i++){
+        if(deck[i]){
+            free(deck[i]);
+        }
     }
 }

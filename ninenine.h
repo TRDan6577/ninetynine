@@ -63,7 +63,12 @@ void errorCheck(int argc);
 /**
  * Purpose: Frees the players
  */
-void cleanup(Player **players, short int numPlayers);
+void cleanupPlayers(Player **players, short int numPlayers);
+
+/**
+ * Purpose: Frees the deck
+ */
+void cleanupDeck(Card *deck[DECK_SIZE]);
 
 /**
  * Purpose: Deals cards to 
