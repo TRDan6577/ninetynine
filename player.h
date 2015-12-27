@@ -46,5 +46,13 @@ Player *createPlayer(char *name, short int level);
  */
 void destroyPlayer(Player *deadMan);
 
+/**
+ * Purpose: Determines where in the list of cards that a player needs to be
+ *          dealt his or her next card.
+ * @param (Player *) player - the player that needs to be dealt a card
+ * @return (short int) the position of the next card needed. If the player has a full
+ *          hand, this returns -1.
+ */
+short int posOfCardNeeded(Player *player);
 
 #endif

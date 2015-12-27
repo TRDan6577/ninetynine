@@ -46,3 +46,20 @@ void destroyPlayer(Player *deadMan){
         free(deadMan);
     }
 }
+
+short int posOfCardNeeded(Player *player){
+    // Look through the player's hand one by one to determine the missing place
+    // of the card
+    short int i = 0;
+    while(player->cards[i] && i < NUM_STARTING_CARDS){
+        i++;
+    }
+
+    // In a list that is only 3 elements long, we cannot access above indice 2
+    if(i >= NUM_STARTING_CARDS){
+        // There were no NULL entries
+        i = -1;
+    }
+
+    return i;
+}

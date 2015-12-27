@@ -69,10 +69,11 @@ Card *createCard(char suit, char value){
     return newCard;
 }
 
-void initDeck(Card *deck[DECK_SIZE]){
+void initDeck(Card *deck[DECK_SIZE], Card *discardPile[DECK_SIZE]){
     for(int i = 0; i < NUM_SUITS; i++){
         for(int j = 0; j < NUM_VALUES; j++){
             deck[NUM_VALUES*i+j] = createCard(suits[i], values[j]);
+            discardPile[NUM_VALUES*i+j] = NULL;
         }
     }
 }

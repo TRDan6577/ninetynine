@@ -73,9 +73,10 @@ Card *createCard(char suit, char value);
 
 /**
  * Purpose: Initializes the deck. The deck still needs to be shuffled
- * @param (Card **) the empty deck to fill with cards
+ * @param (Card **) deck - the empty deck to fill with cards
+ * @param (Card **) discardPile - the pile to mark as empty
  */
-void initDeck(Card *deck[DECK_SIZE]);
+void initDeck(Card *deck[DECK_SIZE], Card *discardPile[DECK_SIZE]);
 
 /**
  * Purpose: Shuffles the cards in the deck. Credit for this function goes to

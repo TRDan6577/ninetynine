@@ -24,7 +24,7 @@ int main(int argc, char **argv){
     const short int numPlayers = argc-1;
     Player *players[numPlayers];
     Card *deck[DECK_SIZE];
-    //Card *discardPile[DECK_SIZE];
+    Card *discardPile[DECK_SIZE];
 
     // Parse the command line arguments
     for(int i = 1; i < argc; i++){
@@ -53,16 +53,17 @@ int main(int argc, char **argv){
         }
     }
 
-    // Fill the deck with cards
-    initDeck(deck);
+    // Fill the deck with cards and set the discard pile to empty
+    initDeck(deck, discardPile);
 
     // Shuffle the deck
     shuffle(deck);
 
-    // TODO: deal the cards -> make a function for this too!
+    // Deal the cards
+    dealCards(deck, players, numPlayers);
 
+    cleanupDeck(deck, discardPile);
     cleanupPlayers(players, numPlayers);
-    cleanupDeck(deck);
 
     return 0;
 }
@@ -89,10 +90,40 @@ void cleanupPlayers(Player **players, short int numPlayers){
     }
 }
 
-void cleanupDeck(Card *deck[DECK_SIZE]){
+void cleanupDeck(Card *deck[DECK_SIZE], Card *discardPile[DECK_SIZE]){
+    // Free the cards in the deck that haven't been dealt
     for(int i = 0; i < DECK_SIZE; i++){
         if(deck[i]){
             free(deck[i]);
         }
     }
+
+    // Free the remaining cards in the discard pile
+    for(int i = 0; i < DECK_SIZE; i++){
+        if(discardPile[i]){
+            free(discardPile[i]);
+        }
+    }
+}
+
+void dealCards(Card *deck[DECK_SIZE], Player **players, short int numPlayers){
+    // Pick the player to get the card
+    for(int p = 0; p < numPlayers; p++){
+        // Pick the card
+        for(int c = 0; c < NUM_STARTING_CARDS; c++){
+            // Deal the card
+            dealCard(players[p], posOfCardNeeded(players[p]), deck);
+        }
+    }
+}
+
+void dealCard(Player *player, short int position, Card *deck[DECK_SIZE]){
+    // Give the player the next card on top of the deck
+    player->cards[position] = deck[cardsDealt];
+    
+    // Remove that card from the deck
+    deck[cardsDealt] = NULL;
+
+    // Increment the number of cards dealt
+    cardsDealt++;
 }
