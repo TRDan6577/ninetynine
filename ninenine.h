@@ -23,8 +23,6 @@
 #include<stdio.h>
 #include<string.h>
 
-static const char *difficultyDelimiter = ":"; // Another splitter for strtok
-short int cardsDealt = 0; // Keeps track of the total number of cards dealt
 
 
 /******************************************************************************
@@ -44,6 +42,18 @@ Card *deck[NUM_CARDS_IN_DECK];
  *          previously the deck
  */
 Card *discard[NUM_CARDS_IN_DECK];
+
+/**
+ * Purpose: The spliter for strtok. cmd args are PlayerName:difficulty level
+ *          so this lets us split on colons.
+ */
+static const char *difficultyDelimiter = ":";
+
+/**
+ * Purpose: Keeps track of the number of cards dealt
+ */
+short int cardsDealt = 0;
+
 
 
 /******************************************************************************
@@ -68,21 +78,17 @@ void errorCheck(int argc);
 void cleanupPlayers(Player **players, short int numPlayers);
 
 /**
- * Purpose: Frees the deck
- * @param (Card **) deck - the cards that haven't been dealt yet
- * @param (Card **) discardPile - the place where cards go after they've been
- *          played
+ * Purpose: Frees the deck and the discard pile
  */
-void cleanupDeck(Card *deck[DECK_SIZE], Card *discardPile[DECK_SIZE]);
+void cleanupDeck();
 
 /**
  * Purpose: Starts a new round whereby this function gives three new cards to 
  *          each player in the game.
- * @param (Card **) deck - the deck of cards
  * @param (Player **) players - the list of players
  * @param (short int) numPlayers - the number of players
  */
-void dealCards(Card *deck[DECK_SIZE], Player **players, short int numPlayers);
+void dealCards(Player **players, short int numPlayers);
 
 /**
  * Purpose: Deals a single card to a player
@@ -91,8 +97,17 @@ void dealCards(Card *deck[DECK_SIZE], Player **players, short int numPlayers);
  *          of cards to deal. When a player plays a card, its value in
  *          player->cards is changed to NULL. The position to deal the card is
  *          the first occurence of NULL
- * @param (Card **) deck - the list of card avalible to deal
  */
-void dealCard(Player *player, short int position, Card *deck[DECK_SIZE]);
+void dealCard(Player *player, short int position);
+
+/**
+ * Purpose: Serves as the main running function for the game. Players put
+ *          their cards in the discard pile and the game counts a running total
+ *          in order to determine which player looses the round.
+ * @param (Player **) players - the players playing the game
+ * @param (short int) numPlayers - the number of players playing the game
+ */
+void playGame(Player **players, short int numPlayers);
+
 
 #endif

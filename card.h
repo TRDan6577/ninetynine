@@ -5,6 +5,9 @@
  * Version Control: Git
  */
 
+#ifndef CARD_H
+#define CARD_H
+
 /******************************************************************************
  *                           Includes and Defines                             *
  *****************************************************************************/
@@ -85,3 +88,5 @@ void initDeck(Card *deck[DECK_SIZE], Card *discardPile[DECK_SIZE]);
  * @param (Card **) deck - the deck to shuffle
  */
 void shuffle(Card *deck[DECK_SIZE]);
+
+#endif

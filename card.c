@@ -23,10 +23,13 @@ Card *createCard(char suit, char value){
     // If value is a digit and not a face card or an ace
     if(isdigit(value)){
 
-        // If the svalue is zero, the dvalue must be 10
-        if(value == '0'){
+        // If the svalue is zero, the dvalue must be +-10
+        // If the svalue is four, the dvalue is zero 
+        if(value == '0' || value == '4'){
             newCard->dValue = 0;
-            newCard->sValue = 't';
+            if(value == '0'){
+                newCard->sValue = 't';
+            }
         }
         // Otherwise, convert the sValue to an int
         else{
