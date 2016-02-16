@@ -55,25 +55,20 @@ short int posOfCardNeeded(Player *player){
         i++;
     }
 
-    // In a list that is only 3 elements long, we cannot access above indice 2
-    if(i >= NUM_STARTING_CARDS){
-        // There were no NULL entries
-        i = -1;
-    }
-
     return i;
 }
 
 short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
         Card *discardPile[DECK_SIZE], short int index){
     short int value; // Value to add to the running total
-    printPlayerTurn(player); // Display the player's hand and some stats
+    short int cardChoosen; // The index of the card choosen
+    printPlayerTurn(player, runningTotal); // Display the player's hand and some stats
 
     while(true){
         // Player should only enter {1|2|3}. Get char and purge the input stream
         printf("Pick a card (1,2,3): ");
         char c = getchar();
-        fpurge(stdin);
+        __fpurge(stdin);
 
         // Check if the value entered is {1|2|3}. If not, ask again
         if(!(c > '0' && c < '4')){
@@ -81,7 +76,7 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
             continue;
         }
 
-        short int cardChoosen = (c-'0')-1; // -1 to get the index
+        cardChoosen = (c-'0')-1; // -1 to get the index
 
         // If the card choosen can have more than 1 value, determine the value
         // that the user wishes to use
@@ -90,9 +85,8 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
             if(player->cards[cardChoosen]->sValue == 'a'){
                 // Get the value of the special card
                 while(true){
-                    char *p;
                     printf("Please enter a value for the ace (1 or 11): ");
-                    value = (short int)scanf("%d", &p);
+                    scanf("%hd", &value);
 
                     // If a correct value was entered, break
                     if(value == 1 || value == 11){
@@ -110,9 +104,8 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
             if(player->cards[cardChoosen]->sValue == 't'){
                 // Get the value of the special card
                 while(true){
-                    char *p;
                     printf("please enter a value for the ten (10 or -10): ");
-                    value = (short int)scanf("%d", &p);
+                    scanf("%hd", &value);
 
                     // If a correct value was entered, break
                     if(value == -10 || value == 10){
@@ -123,11 +116,11 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
             }
 
             if(player->cards[cardChoosen]->sValue == '4'){
-                incrementor = !incrementor; // Invert the incrementor
+                *incrementor = !(*incrementor); // Invert the incrementor
                 value = FOUR;
             }
 
-            if(player->card[cardChoosen]->sValue == '3'){
+            if(player->cards[cardChoosen]->sValue == '3'){
                 // TODO:Skip a player here
                 value = THREE;
             }
@@ -155,10 +148,10 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
     return value;
 }
 
-void printPlayerTurn(Player *p){
+void printPlayerTurn(Player *p, short int runningTotal){
     // Print out the player's name and running total
     printf("%s's turn\n", p->name);
-    printf("Running Total: %02d\n", runningTotal);
+    printf("Running Total: %02hd\n", runningTotal);
 
     // Print the player's hand
     printf("Your Hand:\n");
@@ -182,46 +175,66 @@ void printPlayerTurn(Player *p){
     printTopBottomBoarder();
 }
 
-void printTopLines(char value1, char value2, char value3){
-    printf("  |%c                  |   |%c                   |   |%c                  |\n"
-            value1, value2, value3);
-    printf("  |                  |   |                   |   |                  |\n");
-    printf("  |                  |   |                   |   |                  |\n");
-}
-
-void printBottomLines(char value1, char value2, char value3){
-    printf("  |                  %c|   |                   %c|   |                  %c|\n"
-            value1, value2, value3);
-    printf("  |                  |   |                   |   |                  |\n");
-    printf("  |                  |   |                   |   |                  |\n");
-
-}
-
-void printHeart(short int line){
-    switch(line){
-        case 0:
-            printf("|       __  __       |");
+void determineSuit(char suit, int line){
+    switch(suit){
+        case 's':
+            printSpade(line);
             break;
 
-        case 1:
-            printf("|      (  \\\/  )      |");
+        case 'd':
+            printDiamond(line);
             break;
 
-        case 2:
-            printf("|       \\    \/       |");
+        case 'h':
+            printHeart(line);
             break;
 
-        case 3:
-            printf("|        \\  \/        |");
-            break;
-
-        case 4:
-            printf("|          \\\/        |");
+        case 'c':
+            printClub(line);
             break;
     }
 }
 
-void printClub(short int line){
+void printTopLines(char value1, char value2, char value3){
+    printf("  |%c                   |   |%c                   |   |%c                  |\n",
+            value1, value2, value3);
+    printf("  |                    |   |                    |   |                   |\n");
+    printf("  |                    |   |                    |   |                   |\n");
+}
+
+void printBottomLines(char value1, char value2, char value3){
+    printf("  |                    |   |                    |   |                   |\n");
+    printf("  |                    |   |                    |   |                   |\n");
+    printf("  |                   %c|   |                   %c|   |                  %c|\n",
+            value1, value2, value3);
+
+}
+
+void printHeart(int line){
+    switch(line){
+        case 0:
+            printf("|       __  __      |");
+            break;
+
+        case 1:
+            printf("|      (  \\/  )     |");
+            break;
+
+        case 2:
+            printf("|       \\    /      |");
+            break;
+
+        case 3:
+            printf("|        \\  /       |");
+            break;
+
+        case 4:
+            printf("|         \\/        |");
+            break;
+    }
+}
+
+void printClub(int line){
     switch(line){
         case 0:
             printf("|         ___        |");
@@ -240,43 +253,43 @@ void printClub(short int line){
             break;
 
         case 4:
-            printf("|         \/_\\        |");
+            printf("|         /_\\        |");
             break;
     }
 }
 
-void printDiamond(short int line){
+void printDiamond(int line){
     switch(line){
         case 0:
-            printf("|         \/\\         |");
+            printf("|         /\\        |");
             break;
 
         case 1:
-            printf("|        \/  \\        |");
+            printf("|        /  \\       |");
             break;
 
         case 2:
-            printf("|       <    >        |");
+            printf("|       <    >      |");
             break;
 
         case 3:
-            printf("|        \\  \/        |");
+            printf("|        \\  /       |");
             break;
 
         case 4:
-            printf("|         \\\/        |");
+            printf("|         \\/        |");
             break;
     }
 }
 
-void printSpade(short int line){
+void printSpade(int line){
     switch(line){
         case 0:
-            printf("|         ^          |");
+            printf("|          ^         |");
             break;
 
         case 1:
-            printf("|        \/   \\       |");
+            printf("|         / \\        |");
             break;
 
         case 2:
@@ -288,12 +301,13 @@ void printSpade(short int line){
             break;
 
         case 4:
-            printf("|         \/_\\        |");
+            printf("|         /_\\        |");
             break;
     }
 }
 
 
 void printTopBottomBoarder(){
-        printf("   --------------------     --------------------     --------------------");
+        printf("   -------------------     --------------------     "
+                "-------------------\n");
 }

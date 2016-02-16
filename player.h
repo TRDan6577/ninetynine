@@ -38,6 +38,8 @@ typedef struct player_t {
     short int numTokens; // The number of tokens left (lose 3 and you're out)
     Card *cards[3]; // Each player starts with 3 cards
     short int level; // The level of the AI. Zero indicates that it is a human
+    bool inGame; // Tells whether the player is still in the game or not
+    bool inRound; // Tells whether the player is still in the round or not
 } Player;
 
 /*****************************************************************************
@@ -96,8 +98,9 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
  * Purpose: Prints a nice output for the player to view before choosing a card
  *          to play from his or her hand
  * @param (Player *) p - the player's hand to print out
+ * @param (short int) runningTotal - the current value of all the cards played
  */
-void printPlayerTurn(Player *p);
+void printPlayerTurn(Player *p, short int runningTotal);
 
 /**
  * Purpose: Prints the top and bottom boarders of the card
@@ -130,27 +133,27 @@ void determineSuit(char suit, int line);
 
 /**
  * Purpose: Prints out the heart onto a card
- * @param (short int) line - which line in the drawing to draw
+ * @param (int) line - which line in the drawing to draw
  */
-void printHeart(short int line);
+void printHeart(int line);
 
 /**
  * Purpose: Prints out the spade onto a card
- * @param (short int) line - which line in the drawing to draw
+ * @param (int) line - which line in the drawing to draw
  */
-void printSpade(short int line);
+void printSpade(int line);
 
 /**
  * Purpose: Prints out the diamond onto a card
- * @param (short int) line - which line in the drawing to draw
+ * @param (int) line - which line in the drawing to draw
  */
-void printDiamond(short int line);
+void printDiamond(int line);
 
 /**
  * Purpose: Prints out the club onto a card
- * @param (short int) line - which line in the drawing to draw
+ * @param (int) line - which line in the drawing to draw
  */
-void printClub(short int line);
+void printClub(int line);
 
 
 #endif

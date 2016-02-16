@@ -29,20 +29,6 @@
  *                              Global Variables                              *
  *****************************************************************************/
 
-
-/**
- * Purpose: Holds all of the cards usable by the players
- */
-Card *deck[NUM_CARDS_IN_DECK];
-
-/**
- * Purpose: Holds all of the cards used by the players. When the discard pile
- *          becomes full (52 entries long), the deck is made to point to it
- *          and the discard points to the empty list of cards that was
- *          previously the deck
- */
-Card *discard[NUM_CARDS_IN_DECK];
-
 /**
  * Purpose: The spliter for strtok. cmd args are PlayerName:difficulty level
  *          so this lets us split on colons.
@@ -79,16 +65,19 @@ void cleanupPlayers(Player **players, short int numPlayers);
 
 /**
  * Purpose: Frees the deck and the discard pile
+ * @param (Card **) deck - the pile of remaining cards
+ * @param (Card **) discardPile - the pile of played cards
  */
-void cleanupDeck();
+void cleanupDeck(Card *deck[DECK_SIZE], Card *discardPile[DECK_SIZE]);
 
 /**
  * Purpose: Starts a new round whereby this function gives three new cards to 
  *          each player in the game.
  * @param (Player **) players - the list of players
  * @param (short int) numPlayers - the number of players
+ * @param (Card **) deck - the pile of remaining cards
  */
-void dealCards(Player **players, short int numPlayers);
+void dealCards(Player **players, short int numPlayers, Card *deck[DECK_SIZE]);
 
 /**
  * Purpose: Deals a single card to a player
@@ -97,8 +86,17 @@ void dealCards(Player **players, short int numPlayers);
  *          of cards to deal. When a player plays a card, its value in
  *          player->cards is changed to NULL. The position to deal the card is
  *          the first occurence of NULL
+ * @param (Card **) deck - The pile of remaining cards
  */
-void dealCard(Player *player, short int position);
+void dealCard(Player *player, short int position, Card *deck[DECK_SIZE]);
+
+/**
+ * Purpose: Sets inRound for each player to true, provided they're still in the
+ *          game
+ * @param (Player **) players - all of the players
+ * @param (short int) numPlayers - the number of players
+ */
+void preRound(Player **players, short int numPlayers);
 
 /**
  * Purpose: Serves as the main running function for the game. Players put
@@ -106,8 +104,10 @@ void dealCard(Player *player, short int position);
  *          in order to determine which player looses the round.
  * @param (Player **) players - the players playing the game
  * @param (short int) numPlayers - the number of players playing the game
+ * @param (Card **) deck - the pile of remaining cards
+ * @param (Card **) discardPile - the pile of played cards
  */
-void playGame(Player **players, short int numPlayers);
-
+void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
+        Card *discardPile[DECK_SIZE]);
 
 #endif

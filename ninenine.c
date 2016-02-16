@@ -10,6 +10,9 @@
 
 #include"ninenine.h"
 
+short int computerTurn(Player *p, short int runningTotal, bool *incrementor,
+        Card *discardPile[DECK_SIZE], short int index);
+
 /**
  * Purpose: The main runner for the program
  * @param (int) argc - the number of arrays in argv
@@ -64,10 +67,10 @@ int main(int argc, char **argv){
     shuffle(deck);
 
     // Deal the cards
-    dealCards(players, numPlayers);
+    dealCards(players, numPlayers, deck);
 
     // Play the Game
-    playGame(deck, discardPile, players, numPlayers);
+    playGame(players, numPlayers, deck, discardPile);
 
     // Cleanup the cards and the players
     cleanupDeck(deck, discardPile);
@@ -114,7 +117,7 @@ void cleanupDeck(Card *deck[DECK_SIZE], Card *discardPile[DECK_SIZE]){
     }
 }
 
-void dealCards(Player **players, short int numPlayers){
+void dealCards(Player **players, short int numPlayers, Card *deck[DECK_SIZE]){
     // Pick the player to get the card
     for(int p = 0; p < numPlayers; p++){
         // Pick the card
@@ -125,7 +128,7 @@ void dealCards(Player **players, short int numPlayers){
     }
 }
 
-void dealCard(Player *player, short int position){
+void dealCard(Player *player, short int position, Card *deck[DECK_SIZE]){
     // Give the player the next card on top of the deck
     player->cards[position] = deck[cardsDealt];
     
@@ -136,7 +139,16 @@ void dealCard(Player *player, short int position){
     cardsDealt++;
 }
 
-void playGame(Player **players, short int numPlayers){
+void preRound(Player **players, short int numPlayers){
+    for(int i = 0; i < numPlayers; i++){
+        if(players[i]->inGame){
+            players[i]->inRound = true;
+        }
+    }
+}
+
+void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
+        Card *discardPile[DECK_SIZE]){
 
     // Players may be booted during the game. We need to keep track of the players
     short int playersStillPlaying = numPlayers;
@@ -146,17 +158,21 @@ void playGame(Player **players, short int numPlayers){
 
         short int i = 0; // Need to keep track of where in Players we are
         short int runningTotal = 0;
+        
+        // Set all remaining players as playing the next round
+        preRound(players, numPlayers);
 
         // Determines the order the players take turns. True increments i while
         // false decrements i as i iterates through the list of players
-        bool *incrementor = true;
+        bool *incrementor = malloc(sizeof(bool));
+        *incrementor = true;
 
         // Play the round
         while(true){
 
             // Determine if the player is no longer in the game, go to the next
             // player
-            if(!(players->player[i]->inGame)){
+            if(!(players[i]->inGame)){
                 if(incrementor){
                     i++;
                 }
@@ -213,14 +229,14 @@ void playGame(Player **players, short int numPlayers){
             if(canPlay){
                 // Play a card and discard it
                 runningTotal += (players[i]->level) ? 
-                    (computerTurn(players[player], runningTotal, incrementor,
+                    (computerTurn(players[i], runningTotal, incrementor,
                                   discardPile, 
                                   cardsDealt-(numPlayers*NUM_STARTING_CARDS)))
-                    : (humanTurn(players[player], runningTotal, incrementor,
+                    : (humanTurn(players[i], runningTotal, incrementor,
                                 discardPile, 
                                 cardsDealt-(numPlayers*NUM_STARTING_CARDS)));
                 // Draw a card
-                dealCard(players[i], posOfCardNeeded(players[i]));
+                dealCard(players[i], posOfCardNeeded(players[i]), deck);
             }
             else{
                 // The player cannot play a card. Take away a token
@@ -253,5 +269,13 @@ void playGame(Player **players, short int numPlayers){
             }
 
         }
+
+        free(incrementor);
     } 
+}
+
+
+short int computerTurn(Player *p, short int runningTotal, bool *incrementor,
+        Card *discardPile[DECK_SIZE], short int index){
+    return humanTurn(p, runningTotal, incrementor, discardPile, index);
 }
