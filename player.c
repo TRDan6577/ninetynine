@@ -155,7 +155,7 @@ void printPlayerTurn(Player *p, short int runningTotal){
 
     // Print the player's hand
     printf("Your Hand:\n");
-    printf("            1                        2                       3\n");
+    printf("            1                        2                        3\n");
     printTopBottomBoarder();
     printTopLines(p->cards[0]->sValue, p->cards[1]->sValue, 
             p->cards[2]->sValue);
@@ -196,16 +196,16 @@ void determineSuit(char suit, int line){
 }
 
 void printTopLines(char value1, char value2, char value3){
-    printf("  |%c                   |   |%c                   |   |%c                  |\n",
+    printf("  |%c                   |   |%c                   |   |%c                   |\n",
             value1, value2, value3);
-    printf("  |                    |   |                    |   |                   |\n");
-    printf("  |                    |   |                    |   |                   |\n");
+    printf("  |                    |   |                    |   |                    |\n");
+    printf("  |                    |   |                    |   |                    |\n");
 }
 
 void printBottomLines(char value1, char value2, char value3){
-    printf("  |                    |   |                    |   |                   |\n");
-    printf("  |                    |   |                    |   |                   |\n");
-    printf("  |                   %c|   |                   %c|   |                  %c|\n",
+    printf("  |                    |   |                    |   |                    |\n");
+    printf("  |                    |   |                    |   |                    |\n");
+    printf("  |                   %c|   |                   %c|   |                   %c|\n",
             value1, value2, value3);
 
 }
@@ -213,23 +213,23 @@ void printBottomLines(char value1, char value2, char value3){
 void printHeart(int line){
     switch(line){
         case 0:
-            printf("|       __  __      |");
+            printf("|       __  __       |");
             break;
 
         case 1:
-            printf("|      (  \\/  )     |");
+            printf("|      (  \\/  )      |");
             break;
 
         case 2:
-            printf("|       \\    /      |");
+            printf("|       \\    /       |");
             break;
 
         case 3:
-            printf("|        \\  /       |");
+            printf("|        \\  /        |");
             break;
 
         case 4:
-            printf("|         \\/        |");
+            printf("|         \\/         |");
             break;
     }
 }
@@ -237,23 +237,23 @@ void printHeart(int line){
 void printClub(int line){
     switch(line){
         case 0:
-            printf("|         ___        |");
+            printf("|        ___         |");
             break;
 
         case 1:
-            printf("|       _(   )_      |");
+            printf("|      _(   )_       |");
             break;
 
         case 2:
-            printf("|      (__   __)     |");
+            printf("|     (__   __)      |");
             break;
 
         case 3:
-            printf("|          ^         |");
+            printf("|         ^          |");
             break;
 
         case 4:
-            printf("|         /_\\        |");
+            printf("|        /_\\         |");
             break;
     }
 }
@@ -261,23 +261,23 @@ void printClub(int line){
 void printDiamond(int line){
     switch(line){
         case 0:
-            printf("|         /\\        |");
+            printf("|         /\\         |");
             break;
 
         case 1:
-            printf("|        /  \\       |");
+            printf("|        /  \\        |");
             break;
 
         case 2:
-            printf("|       <    >      |");
+            printf("|       <    >       |");
             break;
 
         case 3:
-            printf("|        \\  /       |");
+            printf("|        \\  /        |");
             break;
 
         case 4:
-            printf("|         \\/        |");
+            printf("|         \\/         |");
             break;
     }
 }
@@ -285,29 +285,29 @@ void printDiamond(int line){
 void printSpade(int line){
     switch(line){
         case 0:
-            printf("|          ^         |");
+            printf("|         ^          |");
             break;
 
         case 1:
-            printf("|         / \\        |");
+            printf("|        / \\         |");
             break;
 
         case 2:
-            printf("|        (   )       |");
+            printf("|       (   )        |");
             break;
 
         case 3:
-            printf("|          ^         |");
+            printf("|         ^          |");
             break;
 
         case 4:
-            printf("|         /_\\        |");
+            printf("|        /_\\         |");
             break;
     }
 }
 
 
 void printTopBottomBoarder(){
-        printf("   -------------------     --------------------     "
-                "-------------------\n");
+        printf("   --------------------     --------------------     "
+                "--------------------\n");
 }
