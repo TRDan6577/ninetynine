@@ -94,3 +94,15 @@ void shuffle(Card *deck[DECK_SIZE]){
         deck[i] = temp;
     }
 }
+
+void resetDeck(Card *deck[DECK_SIZE], Card *discardPile[DECK_SIZE], short int index){
+
+    // Place the cards from the discardPile into the deck
+    for(int i = 0; i < index; i++){
+        deck[i] = discardPile[i];
+        discardPile[i] = NULL;
+    }
+
+    // Shuffle the full 52 card deck
+    shuffle(deck);
+}

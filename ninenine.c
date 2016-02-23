@@ -120,10 +120,12 @@ void cleanupDeck(Card *deck[DECK_SIZE], Card *discardPile[DECK_SIZE]){
 void dealCards(Player **players, short int numPlayers, Card *deck[DECK_SIZE]){
     // Pick the player to get the card
     for(int p = 0; p < numPlayers; p++){
-        // Pick the card
-        for(int c = 0; c < NUM_STARTING_CARDS; c++){
-            // Deal the card
-            dealCard(players[p], posOfCardNeeded(players[p]), deck);
+        // Check to make sure the player's still in the game, then pick the card
+        if(players[p]->inGame){
+            for(int c = 0; c < NUM_STARTING_CARDS; c++){
+                // Deal the card
+                dealCard(players[p], posOfCardNeeded(players[p]), deck);
+            }
         }
     }
 }
@@ -158,6 +160,7 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
 
         short int i = 0; // Need to keep track of where in Players we are
         short int runningTotal = 0;
+        short int playersInRound = playersStillPlaying;
         
         // Set all remaining players as playing the next round
         preRound(players, numPlayers);
@@ -168,17 +171,21 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
         *incrementor = true;
 
         // Play the round
-        while(true){
+        while(playersInRound > 1){
 
-            // Determine if the player is no longer in the game, go to the next
-            // player
-            if(!(players[i]->inGame)){
+            // Determine if the player is no longer in the game or round, go to
+            // the next player
+            if(!(players[i]->inRound)){
                 if(incrementor){
                     i++;
+                    i=i%numPlayers;
                 }
                 else{
                     i--;
+                    i=i%numPlayers;
                 }
+
+                continue;
             }
 
             /*
@@ -239,10 +246,13 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
                 dealCard(players[i], posOfCardNeeded(players[i]), deck);
             }
             else{
-                // The player cannot play a card. Take away a token
+                // The player cannot play a card. Take away a token and remove
+                // them from the current round
                 printf("Player %s is unable to play any cards. A token has been\n"
                         "taken away from %s\n", players[i]->name, players[i]->name);
                 players[i]->numTokens--;
+                players[i]->inRound = false;
+                playersInRound--;
 
                 if(!players[i]->numTokens){
                     // If the player is out of tokens, they are removed from the
@@ -252,26 +262,48 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
                     players[i]->inGame = false;
                     playersStillPlaying--;
                 }
-
-                // Go onto the next round if there's only one person playing
-                if(playersStillPlaying == 1){
-                    break;
-                }
-
             }
 
             // Appropriately decide whose turn is next
             if(incrementor){
                 i++;
+                i=i%numPlayers;
             }
             else{
                 i--;
+                i=i%numPlayers;
             }
 
+        } // End of the round
+
+        // If there's more than 1 person playing, then go through the list of
+        // players, discard their hand, shuffle the deck and the discard pile
+        // together and deal a new hand to the player still playing for the
+        // next round
+        if(playersStillPlaying > 1){
+            for(int p = 0; p < numPlayers; p++){
+                for(int c = 0; c < NUM_STARTING_CARDS; c++){
+
+                    // If they have a card, put it in the discard pile
+                    if(players[p]->cards[c]){
+                        discardPile[cardsDealt-(p*NUM_STARTING_CARDS+c)-1] 
+                            = players[p]->cards[c];
+                        players[p]->cards[c] = NULL;
+                    }
+                }
+            }
+
+            // Shuffle the discard pile and the deck together
+            resetDeck(deck, discardPile, cardsDealt);
+            
+            cardsDealt = 0;
+
+            // Deal new hands to the players still in the game
+            dealCards(players, numPlayers, deck);
         }
 
         free(incrementor);
-    } 
+    } // End of the game
 }
 
 

@@ -23,6 +23,8 @@ Player *createPlayer(char *name, short int level){
     newPlayer->name = name;
     newPlayer->level = level;
     newPlayer->numCards = NUM_STARTING_CARDS;
+    newPlayer->inGame = true;
+    newPlayer->inRound = true;
     newPlayer->numTokens = NUM_STARTING_TOKENS;
     for(int i = 0; i < NUM_STARTING_CARDS; i++){ 
         newPlayer->cards[i] = NULL; // Player wasn't dealt cards yet
@@ -87,6 +89,7 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
                 while(true){
                     printf("Please enter a value for the ace (1 or 11): ");
                     scanf("%hd", &value);
+                    __fpurge(stdin);
 
                     // If a correct value was entered, break
                     if(value == 1 || value == 11){
@@ -106,6 +109,7 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
                 while(true){
                     printf("please enter a value for the ten (10 or -10): ");
                     scanf("%hd", &value);
+                    __fpurge(stdin);
 
                     // If a correct value was entered, break
                     if(value == -10 || value == 10){

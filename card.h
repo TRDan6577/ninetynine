@@ -89,4 +89,19 @@ void initDeck(Card *deck[DECK_SIZE], Card *discardPile[DECK_SIZE]);
  */
 void shuffle(Card *deck[DECK_SIZE]);
 
+/**
+ * Purpose: Puts all the cards in the deck and shuffles it as if the deck was
+ *          newly made
+ * @param (Card **) deck - the array of Card pointers that will hold all the
+ *          cards after this function executes
+ * @param (Card **) discardPile - the small amount of cards to be transferedto
+ *          to deck
+ * @param (short int) index - the number of cards to be moved from the
+ *          discardPile to the deck. The deck must have empty positions for
+ *          the size of index and the discardPile must have cards only up until
+ *          the size of the index. (ex if index = 8, discardPile better have
+ *          Card entries from [0..7] and deck must be empty from [0..7]
+ */
+void resetDeck(Card *deck[DECK_SIZE], Card *discardPile[DECK_SIZE], short int index);
+
 #endif
