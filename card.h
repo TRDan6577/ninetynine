@@ -18,7 +18,7 @@
 #define JACK 'j' // Worth 10
 #define ACE 'a' // Worth 1 or 11; player chooses
 #define THREE 3 // Skips the next player's turn
-#define FOUR 4 // Reverses play order
+#define FOUR 0 // Reverses play order
 #define NINE 9 // Stack value becomes 99, regardless of previous value
 #define TEN 0 // Player decides +-10. Ten is 0 becuase chars can't be 10
 #define DECK_SIZE 52 // Size of standard deck of cards

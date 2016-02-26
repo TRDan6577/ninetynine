@@ -177,12 +177,15 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
             // Determine if the player is no longer in the game or round, go to
             // the next player
             if(!(players[i]->inRound)){
-                if(incrementor){
+                if(*incrementor){
                     i++;
                     i=i%numPlayers;
                 }
                 else{
                     i--;
+                    if(i == -1){
+                        i = numPlayers-1;
+                    }
                     i=i%numPlayers;
                 }
 
@@ -270,12 +273,15 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
             }
 
             // Appropriately decide whose turn is next
-            if(incrementor){
+            if(*incrementor){
                 i++;
                 i=i%numPlayers;
             }
             else{
                 i--;
+                if(i == -1){
+                    i = numPlayers-1;
+                }
                 i=i%numPlayers;
             }
 

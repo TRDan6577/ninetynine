@@ -120,12 +120,10 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
             }
 
             if(player->cards[cardChoosen]->sValue == '4'){
-                *incrementor = !(*incrementor); // Invert the incrementor
                 value = FOUR;
             }
 
             if(player->cards[cardChoosen]->sValue == '3'){
-                // TODO:Skip a player here
                 value = THREE;
             }
 
@@ -142,6 +140,16 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
 
         // If you're here it means the card is valid. Break
         break;
+    }
+
+    // Do 3 and 4's special actions AFTER we've determined that they can
+    // actually play the three or four
+    if(player->cards[cardChoosen]->sValue == '4'){
+        *incrementor = !(*incrementor); // Invert the incrementor
+    }
+
+    if(player->cards[cardChoosen]->sValue == '3'){
+        // TODO:Skip a player here
     }
 
     // Place the played card in the discard pile
