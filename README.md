@@ -23,3 +23,17 @@ exceptions.
 ![alt tag](https://raw.githubusercontent.com/TRDan6577/ninetynine/master/exampleOutput/gamePic1.JPG)
 ![alt tag](https://raw.githubusercontent.com/TRDan6577/ninetynine/master/exampleOutput/gamePic2.JPG)
 ![alt tag](https://raw.githubusercontent.com/TRDan6577/ninetynine/master/exampleOutput/gamePic3.JPG)
+
+## Installation
+> $git clone https://github.com/TRDan6577/ninetynine.git
+Navigate to the directory where you downloaded it and compile and link with gcc. No special arguments required
+
+## Running the Program
+> $./ninenine <yourPlayerName> {anotherHumanPlayer | computerPlayer:{1 | 2 | 3}} [morePlayers]...
+You must have at least two players playing and cannot have a game with more than 5 players. Computer players
+(though not yet implemented) can be created by placing a colon in a player's name followed by their difficulty.
+1 for easiest and 3 for hardest
+
+## Contributors
+Thomas Daniels
+Special Thanks to Jacob Huynh for the idea
