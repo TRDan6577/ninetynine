@@ -262,6 +262,10 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
                     players[i]->inGame = false;
                     playersStillPlaying--;
                 }
+
+                // Wait for user input to continue
+                printf("Press any key to continue ");
+                getchar();
             }
 
             // Appropriately decide whose turn is next
@@ -273,6 +277,9 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
                 i--;
                 i=i%numPlayers;
             }
+
+            // Clear the screen for the next player
+            system("clear");
 
         } // End of the round
 
