@@ -19,4 +19,7 @@ exceptions.
 7. Aces are worth 1 or 11
 
 ## Code Example
-./ninenine tom test1:1 test2:1 test3:2
+(Note: used images because formatting the output in the README.md would have taken FOREVER)
+![alt tag](https://raw.githubusercontent.com/TRDan6577/ninetynine/master/exampleOutput/gamePic1.JPG)
+![alt tag](https://raw.githubusercontent.com/TRDan6577/ninetynine/master/exampleOutput/gamePic2.JPG)
+![alt tag](https://raw.githubusercontent.com/TRDan6577/ninetynine/master/exampleOutput/gamePic3.JPG)
