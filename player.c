@@ -310,8 +310,17 @@ void printSpade(int line){
     }
 }
 
-
 void printTopBottomBoarder(){
         printf("   --------------------     --------------------     "
                 "--------------------\n");
+}
+
+void shufflePlayers(Player** players, short int numPlayers){
+    int j;
+    for(int i = 0; i < numPlayers - 1; i++){
+        j = i + rand() / (RAND_MAX / (numPlayers-i)+1);
+        Player *temp = players[j];
+        players[j] = players[i];
+        players[i] = temp;
+    }
 }

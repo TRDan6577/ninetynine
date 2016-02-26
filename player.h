@@ -155,5 +155,12 @@ void printDiamond(int line);
  */
 void printClub(int line);
 
+/**
+ * Purpose: Randomize the order in which players play cards
+ * @param (Player**) players - the list of players
+ * @param (short int) numPlayers - the number of players
+ */
+void shufflePlayers(Player** players, short int numPlayers);
+
 
 #endif

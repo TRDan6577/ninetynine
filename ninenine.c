@@ -63,8 +63,9 @@ int main(int argc, char **argv){
     // Fill the deck with cards and set the discard pile to empty
     initDeck(deck, discardPile);
 
-    // Shuffle the deck
+    // Shuffle the deck and mix the order of the players
     shuffle(deck);
+    shufflePlayers(players, numPlayers);
 
     // Deal the cards
     dealCards(players, numPlayers, deck);
@@ -300,6 +301,8 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
                 }
             }
 
+            printf("End of the round! Starting a new round....\n\n");
+
             // Shuffle the discard pile and the deck together
             resetDeck(deck, discardPile, cardsDealt);
             
@@ -311,6 +314,13 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
 
         free(incrementor);
     } // End of the game
+
+    // Print the winner!
+    for(int i = 0; i < numPlayers; i++){
+        if(players[i]->inGame){ // The winner is the only player in the game
+            printf("The winner is %s!!!\n", players[i]->name);
+        }
+    }
 }
 
 
