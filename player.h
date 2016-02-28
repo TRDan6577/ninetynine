@@ -81,12 +81,12 @@ short int posOfCardNeeded(Player *player);
  * @param (short int) runningTotal - the total value of the stack of cards
  * @param (bool *) incrementor - a pointer to a bool. Determines turn order
  * @param (Card **) discardPile - the array of Card* that have been played
- * @param (short int*) turnTracker - keeps track of whose turn it is
+ * @param (bool *) skipPlayer - this is true if we're skipping the next player
  * @param (short int) index - the index into the discardPile
  * @return (short int) the numerical value to add to the stack
  */
 short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
-        Card *discardPile[DECK_SIZE], short int *turnTracker, short int index);
+        Card *discardPile[DECK_SIZE], bool *skipPlayer, short int index);
 
 /*****************************************************************************
  *                                                                           *

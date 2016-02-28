@@ -11,7 +11,7 @@
 #include"ninenine.h"
 
 short int computerTurn(Player *p, short int runningTotal, bool *incrementor,
-        Card *discardPile[DECK_SIZE], short int *turnTracker, short int index);
+        Card *discardPile[DECK_SIZE], bool *skipPlayer, short int index);
 
 /**
  * Purpose: The main runner for the program
@@ -72,6 +72,8 @@ int main(int argc, char **argv){
 
     // Play the Game
     playGame(players, numPlayers, deck, discardPile);
+
+    
 
     // Cleanup the cards and the players
     cleanupDeck(deck, discardPile);
@@ -159,10 +161,10 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
     // Loop until there is only one player playing each round (a WINNER!!!)
     while(playersStillPlaying > 1){
 
-        short int *i = malloc(sizeof(short int));
-        *i = 0; // Need to keep track of where in Players we are
+        short int i = 0; // Need to keep track of where in Players we are
         short int runningTotal = 0;
         short int playersInRound = playersStillPlaying;
+        short int playersAtBegin = playersStillPlaying;
         
         // Set all remaining players as playing the next round
         preRound(players, numPlayers);
@@ -172,22 +174,25 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
         bool *incrementor = malloc(sizeof(bool));
         *incrementor = true;
 
+        // Tell us when we need to skip a player (because a 3 was played)
+        bool *skipPlayer = malloc(sizeof(bool));
+        *skipPlayer = false;
+
         // Play the round
         while(playersInRound > 1){
 
             // Determine if the player is no longer in the game or round, go to
             // the next player
-            if(!(players[*i]->inRound)){
+            if(!(players[i]->inRound)){
                 if(*incrementor){
-                    *i=*i+1;
-                    *i=*i%numPlayers;
+                    i++;
+                    i=i%numPlayers;
                 }
                 else{
-                    *i=*i-1;
-                    if(*i == -1){
-                        *i = numPlayers-1;
+                    i--;
+                    if(i == -1){
+                        i = numPlayers-1;
                     }
-                    *i=*i%numPlayers;
                 }
 
                 continue;
@@ -204,23 +209,23 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
             for(int c = 0; c < NUM_STARTING_CARDS; c++){
                 
                 // Calculate the lowest value for any special card
-                if(players[*i]->cards[c]->special){
+                if(players[i]->cards[c]->special){
 
                     // Detemine value if card is an ace
-                    if(players[*i]->cards[c]->sValue == 'a' && 
+                    if(players[i]->cards[c]->sValue == 'a' && 
                             runningTotal + 1 <= 99){
                         canPlay = true;
                     }
 
                     // If the card is a 9 or 10, those can always be played
-                    if(players[*i]->cards[c]->sValue == 't' ||
-                            players[*i]->cards[c]->sValue == '9'){
+                    if(players[i]->cards[c]->sValue == 't' ||
+                            players[i]->cards[c]->sValue == '9'){
                         canPlay = true;
                     }
 
                 }
                 else{
-                    if(runningTotal + players[*i]->cards[c]->dValue <= 99){
+                    if(runningTotal + players[i]->cards[c]->dValue <= 99){
                         canPlay = true;
                     }
                 }
@@ -240,31 +245,31 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
             // computer
             if(canPlay){
                 // Play a card and discard it
-                runningTotal += (players[*i]->level) ? 
-                    (computerTurn(players[*i], runningTotal, incrementor,
-                                  discardPile, i,
-                                  cardsDealt-(numPlayers*NUM_STARTING_CARDS)))
-                    : (humanTurn(players[*i], runningTotal, incrementor,
-                                discardPile, i,
-                                cardsDealt-(numPlayers*NUM_STARTING_CARDS)));
+                runningTotal += (players[i]->level) ? 
+                    (computerTurn(players[i], runningTotal, incrementor,
+                                  discardPile, skipPlayer,
+                                  cardsDealt-(playersAtBegin*NUM_STARTING_CARDS)))
+                    : (humanTurn(players[i], runningTotal, incrementor,
+                                  discardPile, skipPlayer,
+                                  cardsDealt-(playersAtBegin*NUM_STARTING_CARDS)));
                 // Draw a card
-                dealCard(players[*i], posOfCardNeeded(players[*i]), deck);
+                dealCard(players[i], posOfCardNeeded(players[i]), deck);
             }
             else{
                 // The player cannot play a card. Take away a token and remove
                 // them from the current round
                 printf("Player %s is unable to play any cards. A token has been\n"
-                        "taken away from %s\n", players[*i]->name, players[*i]->name);
-                players[*i]->numTokens--;
-                players[*i]->inRound = false;
+                        "taken away from %s\n", players[i]->name, players[i]->name);
+                players[i]->numTokens--;
+                players[i]->inRound = false;
                 playersInRound--;
 
-                if(!players[*i]->numTokens){
+                if(!players[i]->numTokens){
                     // If the player is out of tokens, they are removed from the
                     // game
                     printf("Player %s is out of tokens and has been removed from\n"
-                            "the game\n", players[*i]->name);
-                    players[*i]->inGame = false;
+                            "the game\n", players[i]->name);
+                    players[i]->inGame = false;
                     playersStillPlaying--;
                 }
 
@@ -272,18 +277,25 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
                 printf("Press any key to continue ");
                 getchar();
             }
-
+            
             // Appropriately decide whose turn is next
             if(*incrementor){
-                *i=*i+1;
-                *i=*i%numPlayers;
+                i++;
+                if(*skipPlayer){
+                    i++;
+                    *skipPlayer = false;
+                }
+                i=i%numPlayers;
             }
             else{
-                *i=*i-1;
-                if(*i == -1){
-                    *i = numPlayers-1;
+                i--;
+                if(*skipPlayer){
+                    i--;
+                    *skipPlayer = false;
                 }
-                *i=*i%numPlayers;
+                if(i < 0){
+                    i = numPlayers+i;
+                }
             }
 
             // Clear the screen for the next player
@@ -296,14 +308,18 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
         // together and deal a new hand to the player still playing for the
         // next round
         if(playersStillPlaying > 1){
+            short int cardsNotInDiscard = -1;
             for(int p = 0; p < numPlayers; p++){
                 for(int c = 0; c < NUM_STARTING_CARDS; c++){
 
                     // If they have a card, put it in the discard pile
                     if(players[p]->cards[c]){
-                        discardPile[cardsDealt-(p*NUM_STARTING_CARDS+c)-1] 
-                            = players[p]->cards[c];
+                        discardPile[cardsDealt-(p*NUM_STARTING_CARDS+c)+
+                        cardsNotInDiscard] = players[p]->cards[c];
                         players[p]->cards[c] = NULL;
+                    }
+                    else{
+                        cardsNotInDiscard--;
                     }
                 }
             }
@@ -317,11 +333,9 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
 
             // Deal new hands to the players still in the game
             dealCards(players, numPlayers, deck);
-
-            // Free the variable keeping track of whose turn it is
-            free(i);
         }
 
+        free(skipPlayer);
         free(incrementor);
     } // End of the game
 
@@ -335,6 +349,6 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
 
 
 short int computerTurn(Player *p, short int runningTotal, bool *incrementor,
-        Card *discardPile[DECK_SIZE], short int *turnTracker, short int index){
-    return humanTurn(p, runningTotal, incrementor, discardPile, turnTracker, index);
+        Card *discardPile[DECK_SIZE], bool *skipPlayer, short int index){
+    return humanTurn(p, runningTotal, incrementor, discardPile, skipPlayer, index);
 }

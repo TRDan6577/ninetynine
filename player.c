@@ -61,7 +61,7 @@ short int posOfCardNeeded(Player *player){
 }
 
 short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
-        Card *discardPile[DECK_SIZE], short int *turnTracker, short int index){
+        Card *discardPile[DECK_SIZE], bool *skipPlayer, short int index){
     short int value; // Value to add to the running total
     short int cardChoosen; // The index of the card choosen
     printPlayerTurn(player, runningTotal); // Display the player's hand and some stats
@@ -149,12 +149,7 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
     }
 
     if(player->cards[cardChoosen]->sValue == '3'){
-        if(*incrementor){
-            *turnTracker=*turnTracker+1;
-        }
-        else{
-            *turnTracker=*turnTracker-1;
-        }
+        *skipPlayer = true;
     }
 
     // Place the played card in the discard pile
