@@ -142,6 +142,9 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
         break;
     }
 
+    // Clear the screen
+    system("clear");
+
     // Do 3 and 4's special actions AFTER we've determined that they can
     // actually play the three or four
     if(player->cards[cardChoosen]->sValue == '4'){
@@ -159,6 +162,130 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
     // Add the value of the card to the discard pile
     return value;
 }
+
+short int computerTurn(Player *player, short int runningTotal, bool *incrementor,
+        Card *discardPile[DECK_SIZE], bool *skipPlayer, short int index){
+
+    short int value; // The value to be added to the stack
+    short int cardChoice; // The index of the choosen card
+
+    /*
+    // This boolean determines if a level two player is going to play as a level
+    // 1 or a level 3 player this turn
+    bool level1 = false;
+
+    // If the computer player's level is two, set the level for this turn
+    if(player->level == 2){
+        level1 = rand()%2;
+    }
+
+    if(player->level == 1 || level1){*/
+    // Randomly pick a card until we find one to play
+    while(1){
+        bool canPlay[3] = {true, true, true}; // Assume we can play all cards
+
+        cardChoice = rand()%3;
+
+        // In order to prevent the possibility of never choosing a valid card,
+        // if we pick an invalid card, just increment the card choice by one
+        // until we can play a valid card.
+        while(!canPlay[cardChoice]){
+            cardChoice = (cardChoice+1)%3;
+        }
+
+        // Determine any special values (example: TEN can be +-10)
+        if(player->cards[cardChoice]->special){
+
+            // Determine value for a ten
+            if(player->cards[cardChoice]->sValue == 't'){
+                if(runningTotal+10 <= 99){
+                    value = 10;
+                }
+                else{
+                    value = -10;
+                }
+            }
+            // Determine value for an ace
+            else if(player->cards[cardChoice]->sValue == 'a'){
+                if(runningTotal+11 <= 99){
+                    value = 11;
+                }
+                else if(runningTotal+1 <= 99){
+                    value = 1;
+                }
+                else{
+                    canPlay[cardChoice] = false;
+                    continue;
+                }
+            }
+            else if(player->cards[cardChoice]->sValue == '9'){
+                value = 99-runningTotal;
+            }
+            // Set the value for the rest of the cards as their dValue
+            else{
+
+                // If we can't play the card, note that and pick another
+                if(player->cards[cardChoice]->dValue > 99){
+                    canPlay[cardChoice] = false;
+                    continue;
+                }
+
+                value = player->cards[cardChoice]->dValue;
+
+            }
+        }
+        // Set the value as the dValue for all the other cards
+        else{
+            if(player->cards[cardChoice]->dValue > 99){
+                canPlay[cardChoice] = false;
+                continue;
+            }
+
+            value = player->cards[cardChoice]->dValue;
+        }
+
+        // If we made it here, the value choose is valid
+        break;
+    }
+    /*}
+    else{
+        // Level three stuff here
+    }*/
+
+    if(player->cards[cardChoice]->sValue == '4'){
+        *incrementor = !(*incrementor); // Invert the incrementor
+    }
+
+    if(player->cards[cardChoice]->sValue == '3'){
+        *skipPlayer = true;
+    }
+
+    printf("[+] Player %s played %c with a value of %d\n", 
+            player->name, player->cards[cardChoice]->sValue, value);
+   
+    // Place the played card in the discard pile
+    discardPile[index] = player->cards[cardChoice];
+    player->cards[cardChoice] = NULL;
+
+    
+    return value;
+}
+
+void shufflePlayers(Player** players, short int numPlayers){
+    int j;
+    for(int i = 0; i < numPlayers - 1; i++){
+        j = i + rand() / (RAND_MAX / (numPlayers-i)+1);
+        Player *temp = players[j];
+        players[j] = players[i];
+        players[i] = temp;
+    }
+}
+
+
+/*
+ *              PRINTING FUNCTIONS
+ */
+
 
 void printPlayerTurn(Player *p, short int runningTotal){
     // Print out the player's name and running total
@@ -323,12 +450,4 @@ void printTopBottomBoarder(){
                 "--------------------\n");
 }
 
-void shufflePlayers(Player** players, short int numPlayers){
-    int j;
-    for(int i = 0; i < numPlayers - 1; i++){
-        j = i + rand() / (RAND_MAX / (numPlayers-i)+1);
-        Player *temp = players[j];
-        players[j] = players[i];
-        players[i] = temp;
-    }
-}
+

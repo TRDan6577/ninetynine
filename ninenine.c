@@ -10,9 +10,6 @@
 
 #include"ninenine.h"
 
-short int computerTurn(Player *p, short int runningTotal, bool *incrementor,
-        Card *discardPile[DECK_SIZE], bool *skipPlayer, short int index);
-
 /**
  * Purpose: The main runner for the program
  * @param (int) argc - the number of arrays in argv
@@ -85,7 +82,7 @@ int main(int argc, char **argv){
 void errorCheck(int argc){
     // If there were two command line arguments then print the usage message
     if(argc <= 2){
-        fprintf(stderr, "usage: ninenine playerName AIPlayerName:difficulty "
+        fprintf(stderr, "usage: ./ninenine playerName AIPlayerName:difficulty "
                 "[AIPlayerName:difficulty] ...\n");
         exit(0);
     }
@@ -258,8 +255,8 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
             else{
                 // The player cannot play a card. Take away a token and remove
                 // them from the current round
-                printf("Player %s is unable to play any cards. A token has been\n"
-                        "taken away from %s\n", players[i]->name, players[i]->name);
+                printf("[-] Player %s is unable to play any cards. A token has been\n"
+                        "\ttaken away from %s\n", players[i]->name, players[i]->name);
                 players[i]->numTokens--;
                 players[i]->inRound = false;
                 playersInRound--;
@@ -267,8 +264,8 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
                 if(!players[i]->numTokens){
                     // If the player is out of tokens, they are removed from the
                     // game
-                    printf("Player %s is out of tokens and has been removed from\n"
-                            "the game\n", players[i]->name);
+                    printf("[-] Player %s is out of tokens and has been removed from\n"
+                            "\tthe game\n", players[i]->name);
                     players[i]->inGame = false;
                     playersStillPlaying--;
                 }
@@ -276,6 +273,9 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
                 // Wait for user input to continue
                 printf("Press any key to continue ");
                 getchar();
+
+                // Clear the screen
+                system("clear");
             }
             
             // Appropriately decide whose turn is next
@@ -297,9 +297,6 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
                     i = numPlayers+i;
                 }
             }
-
-            // Clear the screen for the next player
-            system("clear");
 
         } // End of the round
 
@@ -345,10 +342,4 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
             printf("The winner is %s!!!\n", players[i]->name);
         }
     }
-}
-
-
-short int computerTurn(Player *p, short int runningTotal, bool *incrementor,
-        Card *discardPile[DECK_SIZE], bool *skipPlayer, short int index){
-    return humanTurn(p, runningTotal, incrementor, discardPile, skipPlayer, index);
 }

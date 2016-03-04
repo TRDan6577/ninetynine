@@ -88,6 +88,42 @@ short int posOfCardNeeded(Player *player);
 short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
         Card *discardPile[DECK_SIZE], bool *skipPlayer, short int index);
 
+/**
+ * Pre: Player can actually play a card
+ * Purpose: This function is the brain of the computer player. It chooses which
+ *          card to play, depending on the level of the computer player. Level
+ *          1 is least difficult while level 3 is most difficult.
+ * @param (Player *) player - the player playing the turn
+ * @param (short int) runningTotal - the total value of the stack of cards
+ * @param (bool *) incrementor - a pointer to a bool. Determines turn order
+ * @param (Card **) discardPile - the array of Card* that have been played
+ * @param (bool *) skipPlayer - this is true if we're skipping the next player
+ * @param (short int) index - the index into the discardPile
+ * @return (short int) the numerical value to add to the stack
+ */
+short int computerTurn(Player *player, short int runningTotal, bool *incrementor,
+        Card *discardPile[DECK_SIZE], bool *skipPlayer, short int index);
+
+     /******************** A WORD ABOUT COMPUTER LEVELS*************************
+     * Computer Levels:
+     * 1) If the computer is on the easiest difficultly level, it will choose a
+     *          card at random to play. It will continue to randomly pick a card
+     *          until it finds one that it can play that doesn't exceed a stack
+     *          value of 99.
+     * 2) If the computer is on level two, it has a %50 chance of being a level
+     *          1 player this turn and a 50% of being a level three player this
+     *          turn. Once it is determined which level it will play as this
+     *          turn, it will act as though it came into the function at that
+     *          level.
+     * 3) The most difficult computer setting is three. This player's strategy
+     *          is to hold on to kings, 4s, and 9s until it's the only card
+     *          left to play (example: stack value is at 99). All these cards
+     *          have a value of zero when the stack value is 99. The only the
+     *          computer holds out at 99, the better chance the computer has
+     *          of knocking out all the other opponents.
+     *************************************************************************/
+
+
 /*****************************************************************************
  *                                                                           *
  *                           Drawing Functions                               *
