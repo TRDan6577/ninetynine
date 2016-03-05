@@ -179,78 +179,215 @@ short int computerTurn(Player *player, short int runningTotal, bool *incrementor
         level1 = rand()%2;
     }
 
-    if(player->level == 1 || level1){*/
+    */if(player->level == 1){// || level1){
     // Randomly pick a card until we find one to play
-    while(1){
-        bool canPlay[3] = {true, true, true}; // Assume we can play all cards
+        while(1){
+            bool canPlay[3] = {true, true, true}; // Assume we can play all cards
 
-        cardChoice = rand()%3;
+            cardChoice = rand()%3;
 
-        // In order to prevent the possibility of never choosing a valid card,
-        // if we pick an invalid card, just increment the card choice by one
-        // until we can play a valid card.
-        while(!canPlay[cardChoice]){
-            cardChoice = (cardChoice+1)%3;
-        }
+            // In order to prevent the possibility of never choosing a valid card,
+            // if we pick an invalid card, just increment the card choice by one
+            // until we can play a valid card.
+            while(!canPlay[cardChoice]){
+                cardChoice = (cardChoice+1)%3;
+            }
 
-        // Determine any special values (example: TEN can be +-10)
-        if(player->cards[cardChoice]->special){
+            // Determine any special values (example: TEN can be +-10)
+            if(player->cards[cardChoice]->special){
 
-            // Determine value for a ten
-            if(player->cards[cardChoice]->sValue == 't'){
-                if(runningTotal+10 <= 99){
-                    value = 10;
+                // Determine value for a ten
+                if(player->cards[cardChoice]->sValue == 't'){
+                    if(runningTotal+10 <= 99){
+                        value = 10;
+                    }
+                    else{
+                        value = -10;
+                    }
                 }
+                // Determine value for an ace
+                else if(player->cards[cardChoice]->sValue == 'a'){
+                    if(runningTotal+11 <= 99){
+                        value = 11;
+                    }
+                    else if(runningTotal+1 <= 99){
+                        value = 1;
+                    }
+                    else{
+                        canPlay[cardChoice] = false;
+                        continue;
+                    }
+                }
+                else if(player->cards[cardChoice]->sValue == '9'){
+                    value = 99-runningTotal;
+                }
+                // Set the value for the rest of the cards as their dValue
                 else{
-                    value = -10;
+
+                    // If we can't play the card, note that and pick another
+                    if(player->cards[cardChoice]->dValue > 99){
+                        canPlay[cardChoice] = false;
+                        continue;
+                    }
+
+                    value = player->cards[cardChoice]->dValue;
+
                 }
             }
-            // Determine value for an ace
-            else if(player->cards[cardChoice]->sValue == 'a'){
-                if(runningTotal+11 <= 99){
-                    value = 11;
-                }
-                else if(runningTotal+1 <= 99){
-                    value = 1;
-                }
-                else{
-                    canPlay[cardChoice] = false;
-                    continue;
-                }
-            }
-            else if(player->cards[cardChoice]->sValue == '9'){
-                value = 99-runningTotal;
-            }
-            // Set the value for the rest of the cards as their dValue
+            // Set the value as the dValue for all the other cards
             else{
-
-                // If we can't play the card, note that and pick another
                 if(player->cards[cardChoice]->dValue > 99){
                     canPlay[cardChoice] = false;
                     continue;
                 }
 
                 value = player->cards[cardChoice]->dValue;
+            }
 
+            // If we made it here, the value choosen is valid
+            break;
+        }
+    } // End level 1 logic
+    // Level 3 logic
+    else{
+        // if runningTotal < 99 pick the highest value card to play that's not special
+        // our special cards to hold onto are 4, 9, 10, k
+        // if forced to play one, pick 9, then 10, then k, then 4
+        bool canPlay[3]; // We only care about the cards we can actually play
+        bool isSpecial[3];
+
+        // Find out which cards we can play
+        for(int c = 0; c < NUM_STARTING_CARDS; c++){
+
+            printf("Card %d: %c\n", c, player->cards[c]->sValue);
+
+            // Special cases for special cards
+            if(player->cards[c]->special){
+
+                /* Normally, an ace and a 3 would be special cards, but our AI
+                 * only cares about cards that you can play when the runningTotal
+                 * is 99. We're defining that as a special card
+                 */
+                // Determine validity for an ace
+                if(player->cards[c]->sValue == 'a'){
+                    canPlay[c] = (runningTotal+1 <= 99) ? true : false;
+                    isSpecial[c] = false;
+                }
+                // Determine validity for a 3
+                else if(player->cards[c]->sValue == '3'){
+                    canPlay[c] = (runningTotal+3 <= 99) ? true : false;
+                    isSpecial[c] = false;
+                }
+                // Everything else can be played (4, 9, 10, k)
+                else{
+                    canPlay[c] = true;
+                    isSpecial[c] = true;
+                }
+
+            }
+            else{
+                canPlay[c] = (runningTotal+player->cards[c]->dValue <= 99) ? 
+                    true : false;
+                isSpecial[c] = false;
+            }
+
+        } // Done examining hand
+
+        // Pick a valid non-special card with the highest value if runningTotal
+        // is less than 99
+        cardChoice = -1;
+
+        // Loop through cards. Find highest playable non special
+        for(int c = 0; c < NUM_STARTING_CARDS; c++){
+            if(!isSpecial[c]){
+                // We want to account for the fact that this may be an A
+                if(player->cards[c]->sValue == 'a'){
+                    // If no cards have been picked yet or if 11 is
+                    // higher than the currently choosen card, then
+                    // our best pick is 11, provided it's valid to play
+                    if((cardChoice == -1 || player->cards[cardChoice]->dValue
+                                < 11) && runningTotal+11 <=99){
+                        cardChoice = c;
+                    }
+                    // Same logic as above, but with 1 instead of 11
+                    if((cardChoice == -1 || player->cards[cardChoice]->dValue
+                                < 1) && runningTotal+1 <=99){
+                            cardChoice = c;
+                    }
+                }
+                // For every other non-important card
+                else{
+                    if((cardChoice == -1 || player->cards[cardChoice]->dValue
+                            < player->cards[c]->dValue) && canPlay[c]){
+                        cardChoice = c;
+                    }
+                }
             }
         }
-        // Set the value as the dValue for all the other cards
-        else{
-            if(player->cards[cardChoice]->dValue > 99){
-                canPlay[cardChoice] = false;
-                continue;
+
+        // If cardChoice is still -1, we haven't found a valid card to play.
+        // This means we must play one of our special cards
+        if(cardChoice == -1){
+            for(int c = 0; c < NUM_STARTING_CARDS; c++){
+                if(isSpecial[c]){
+                    // If we have a nine, play it immediately
+                    if(player->cards[c]->sValue == '9'){
+                        cardChoice = c;
+                        break;
+                    }
+                    
+                    // Otherwise, play a card with a value of zero
+                    if(player->cards[c]->dValue == 0 && player->cards[c]->sValue
+                            != 't'){
+                        cardChoice = c;
+                    }
+
+                    // Only play a -10 if you're out of options
+                    if(player->cards[c]->sValue == 't' && cardChoice == -1){
+                        cardChoice = c;
+                    }
+                }
+            }
+        }
+
+        // If we picked a special card, determine the value
+        if(player->cards[cardChoice]->special){
+
+            // Cases for an ace
+            if(player->cards[cardChoice]->sValue == 'a'){
+                if(runningTotal+11 <= 99){
+                    value = 11;
+                }
+                else{
+                    value = 1;
+                }
             }
 
+            // Case for ten
+            if(player->cards[cardChoice]->sValue == 't'){
+                value = -10;
+            }
+
+            // Case for nine
+            if(player->cards[cardChoice]->sValue == '9'){
+                value = 99-runningTotal;
+            }
+
+            // Case for four
+            if(player->cards[cardChoice]->sValue == '4'){
+                value = FOUR;
+            }
+
+            // Case for three
+            if(player->cards[cardChoice]->sValue == '3'){
+                value = THREE;
+            }
+        }
+        // Otherwise, the value is just the dValue
+        else{
             value = player->cards[cardChoice]->dValue;
         }
-
-        // If we made it here, the value choose is valid
-        break;
     }
-    /*}
-    else{
-        // Level three stuff here
-    }*/
 
     if(player->cards[cardChoice]->sValue == '4'){
         *incrementor = !(*incrementor); // Invert the incrementor
