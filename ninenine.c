@@ -214,9 +214,16 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
                         canPlay = true;
                     }
 
-                    // If the card is a 9 or 10, those can always be played
+                    // If the card is a 4, 9, or 10, those can always be played
                     if(players[i]->cards[c]->sValue == 't' ||
-                            players[i]->cards[c]->sValue == '9'){
+                            players[i]->cards[c]->sValue == '9' ||
+                            players[i]->cards[c]->sValue == '4'){
+                        canPlay = true;
+                    }
+
+                    // Determine validity of 3
+                    if(players[i]->cards[c]->sValue == '3' &&
+                            runningTotal+THREE <= 99){
                         canPlay = true;
                     }
 
@@ -269,19 +276,15 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
                     players[i]->inGame = false;
                     playersStillPlaying--;
                 }
-
-                // Wait for user input to continue
-                printf("Press any key to continue ");
-                getchar();
-
-                // Clear the screen
-                system("clear");
             }
-            
+
             // Appropriately decide whose turn is next
             if(*incrementor){
                 i++;
+                i=i%numPlayers;
                 if(*skipPlayer){
+                    printf("[*] Player %s's turn was skipped\n", 
+                            players[i]->name);
                     i++;
                     *skipPlayer = false;
                 }
@@ -289,7 +292,12 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
             }
             else{
                 i--;
+                if(i < 0){
+                    i = numPlayers+i;
+                }
                 if(*skipPlayer){
+                    printf("[*] Player %s's turn was skipped\n", 
+                            players[i]->name);
                     i--;
                     *skipPlayer = false;
                 }
@@ -321,7 +329,15 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
                 }
             }
 
-            printf("End of the round! Starting a new round....\n\n");
+            printf("[*] End of the round! Starting a new round....\n\n");
+
+            // Wait for user input to continue
+            printf("Press any key to continue ");
+            getchar();
+
+            // Clear the screen
+            system("clear");
+
 
             // Shuffle the discard pile and the deck together
             resetDeck(deck, discardPile, cardsDealt);
@@ -339,7 +355,7 @@ void playGame(Player **players, short int numPlayers, Card *deck[DECK_SIZE],
     // Print the winner!
     for(int i = 0; i < numPlayers; i++){
         if(players[i]->inGame){ // The winner is the only player in the game
-            printf("The winner is %s!!!\n", players[i]->name);
+            printf("[*] The winner is %s!!!\n", players[i]->name);
         }
     }
 }

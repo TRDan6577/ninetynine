@@ -165,21 +165,27 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
 
 short int computerTurn(Player *player, short int runningTotal, bool *incrementor,
         Card *discardPile[DECK_SIZE], bool *skipPlayer, short int index){
+//    return humanTurn(player, runningTotal, incrementor, discardPile, skipPlayer, index);
+    
+    printf("Running total: %d\n", runningTotal);
+    for(int i = 0; i < NUM_STARTING_CARDS; i++){
+        printf("card %d: %c\n", i, player->cards[i]->sValue);
+    }
 
     short int value; // The value to be added to the stack
     short int cardChoice; // The index of the choosen card
 
-    /*
+    
     // This boolean determines if a level two player is going to play as a level
     // 1 or a level 3 player this turn
-    bool level1 = false;
+//    bool level1 = false;
 
     // If the computer player's level is two, set the level for this turn
-    if(player->level == 2){
-        level1 = rand()%2;
-    }
+//    if(player->level == 2){
+//        level1 = rand()%2;
+//    }
 
-    */if(player->level == 1){// || level1){
+    if(player->level == 1){// || level1){
     // Randomly pick a card until we find one to play
         while(1){
             bool canPlay[3] = {true, true, true}; // Assume we can play all cards
@@ -225,7 +231,7 @@ short int computerTurn(Player *player, short int runningTotal, bool *incrementor
                 else{
 
                     // If we can't play the card, note that and pick another
-                    if(player->cards[cardChoice]->dValue > 99){
+                    if(player->cards[cardChoice]->dValue+runningTotal > 99){
                         canPlay[cardChoice] = false;
                         continue;
                     }
@@ -236,7 +242,7 @@ short int computerTurn(Player *player, short int runningTotal, bool *incrementor
             }
             // Set the value as the dValue for all the other cards
             else{
-                if(player->cards[cardChoice]->dValue > 99){
+                if(player->cards[cardChoice]->dValue+runningTotal > 99){
                     canPlay[cardChoice] = false;
                     continue;
                 }
@@ -250,16 +256,11 @@ short int computerTurn(Player *player, short int runningTotal, bool *incrementor
     } // End level 1 logic
     // Level 3 logic
     else{
-        // if runningTotal < 99 pick the highest value card to play that's not special
-        // our special cards to hold onto are 4, 9, 10, k
-        // if forced to play one, pick 9, then 10, then k, then 4
         bool canPlay[3]; // We only care about the cards we can actually play
         bool isSpecial[3];
 
         // Find out which cards we can play
         for(int c = 0; c < NUM_STARTING_CARDS; c++){
-
-            printf("Card %d: %c\n", c, player->cards[c]->sValue);
 
             // Special cases for special cards
             if(player->cards[c]->special){
@@ -387,7 +388,7 @@ short int computerTurn(Player *player, short int runningTotal, bool *incrementor
         else{
             value = player->cards[cardChoice]->dValue;
         }
-    }
+    } // End level 3 logic
 
     if(player->cards[cardChoice]->sValue == '4'){
         *incrementor = !(*incrementor); // Invert the incrementor
@@ -406,7 +407,7 @@ short int computerTurn(Player *player, short int runningTotal, bool *incrementor
 
     
     return value;
-}
+} // End the AI logic
 
 void shufflePlayers(Player** players, short int numPlayers){
     int j;
