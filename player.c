@@ -165,27 +165,21 @@ short int humanTurn(Player *player, short int runningTotal, bool *incrementor,
 
 short int computerTurn(Player *player, short int runningTotal, bool *incrementor,
         Card *discardPile[DECK_SIZE], bool *skipPlayer, short int index){
-//    return humanTurn(player, runningTotal, incrementor, discardPile, skipPlayer, index);
     
-    printf("Running total: %d\n", runningTotal);
-    for(int i = 0; i < NUM_STARTING_CARDS; i++){
-        printf("card %d: %c\n", i, player->cards[i]->sValue);
-    }
-
     short int value; // The value to be added to the stack
     short int cardChoice; // The index of the choosen card
 
     
     // This boolean determines if a level two player is going to play as a level
     // 1 or a level 3 player this turn
-//    bool level1 = false;
+    bool level1 = false;
 
     // If the computer player's level is two, set the level for this turn
-//    if(player->level == 2){
-//        level1 = rand()%2;
-//    }
+    if(player->level == 2){
+        level1 = rand()%2;
+    }
 
-    if(player->level == 1){// || level1){
+    if(player->level == 1 || level1){
     // Randomly pick a card until we find one to play
         while(1){
             bool canPlay[3] = {true, true, true}; // Assume we can play all cards
